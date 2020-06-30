@@ -1,0 +1,144 @@
+commands = {}
+dependencies = {
+   lpeg = {
+      ["1.0.2-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   lpeg_patterns = {
+      ["0.5-0"] = {
+         {
+            constraints = {},
+            name = "lua"
+         },
+         {
+            constraints = {},
+            name = "lpeg"
+         }
+      }
+   },
+   lunajson = {
+      ["1.2.2-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   }
+}
+modules = {
+   lpeg = {
+      "lpeg/1.0.2-1"
+   },
+   ["lpeg_patterns.IPv4"] = {
+      "lpeg_patterns/0.5-0"
+   },
+   ["lpeg_patterns.IPv6"] = {
+      "lpeg_patterns/0.5-0"
+   },
+   ["lpeg_patterns.core"] = {
+      "lpeg_patterns/0.5-0"
+   },
+   ["lpeg_patterns.email"] = {
+      "lpeg_patterns/0.5-0"
+   },
+   ["lpeg_patterns.http"] = {
+      "lpeg_patterns/0.5-0"
+   },
+   ["lpeg_patterns.language"] = {
+      "lpeg_patterns/0.5-0"
+   },
+   ["lpeg_patterns.phone"] = {
+      "lpeg_patterns/0.5-0"
+   },
+   ["lpeg_patterns.uri"] = {
+      "lpeg_patterns/0.5-0"
+   },
+   ["lpeg_patterns.util"] = {
+      "lpeg_patterns/0.5-0"
+   },
+   lunajson = {
+      "lunajson/1.2.2-1"
+   },
+   ["lunajson.decoder"] = {
+      "lunajson/1.2.2-1"
+   },
+   ["lunajson.encoder"] = {
+      "lunajson/1.2.2-1"
+   },
+   ["lunajson.sax"] = {
+      "lunajson/1.2.2-1"
+   },
+   re = {
+      "lpeg/1.0.2-1"
+   }
+}
+repository = {
+   lpeg = {
+      ["1.0.2-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               lpeg = "lpeg.so",
+               re = "re.lua"
+            }
+         }
+      }
+   },
+   lpeg_patterns = {
+      ["0.5-0"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               lpeg = "1.0.2-1"
+            },
+            modules = {
+               ["lpeg_patterns.IPv4"] = "lpeg_patterns/IPv4.lua",
+               ["lpeg_patterns.IPv6"] = "lpeg_patterns/IPv6.lua",
+               ["lpeg_patterns.core"] = "lpeg_patterns/core.lua",
+               ["lpeg_patterns.email"] = "lpeg_patterns/email.lua",
+               ["lpeg_patterns.http"] = "lpeg_patterns/http.lua",
+               ["lpeg_patterns.language"] = "lpeg_patterns/language.lua",
+               ["lpeg_patterns.phone"] = "lpeg_patterns/phone.lua",
+               ["lpeg_patterns.uri"] = "lpeg_patterns/uri.lua",
+               ["lpeg_patterns.util"] = "lpeg_patterns/util.lua"
+            }
+         }
+      }
+   },
+   lunajson = {
+      ["1.2.2-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               lunajson = "lunajson.lua",
+               ["lunajson.decoder"] = "lunajson/decoder.lua",
+               ["lunajson.encoder"] = "lunajson/encoder.lua",
+               ["lunajson.sax"] = "lunajson/sax.lua"
+            }
+         }
+      }
+   }
+}
