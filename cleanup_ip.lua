@@ -34,10 +34,15 @@ local IPV6_REPL = os.getenv("IPV6_REPL") or ("0000:"):rep(8):sub(1, -2)
     - timestamp: Unix timestamp with precision (double)
     - record   : Table with multiple key/val
 
-    Uppon return if code == 1 (modified), then filter_lua plugin
-    will replace the original timestamp and record with the returned
-    values. If code == 0 the original record is kept otherwise if
-    code == -1, the original record will be deleted.
+    The code return value represents the result and further action that may
+    follows. If code equals -1, means that filter_lua must drop the record.
+    If code equals 0 the record will not be modified, otherwise if code equals
+    1, means the original timestamp and record have been modified so it must
+    be replaced by the returned values from timestamp (second return value) and
+    record (third return value). If code equals 2, means the original timestamp
+    is not modified and the record has been modified so it must be replaced by
+    the returned values from record (third return value). The code 2 is
+    supported from v1.4.3.
 ]]
 function clean(tag, timestamp, record) -- luacheck:ignore
   -- Making imports at module level leads to errors from fluentbit:

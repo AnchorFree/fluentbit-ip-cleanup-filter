@@ -68,6 +68,13 @@ IPV6_REPL   - replacement for IPv6 addresses (default: 0000:0000:0000:0000:0000:
 ```
 
 
+## Compatibility
+
+Requires at least [fluent-bit v1.4.3](https://fluentbit.io/announcements/v1.4.3/)
+(supports [code 2](https://docs.fluentbit.io/manual/pipeline/filters/lua#return-values)
+for plugin return values).
+
+
 ## Development
 
 ### Update `./vendor`
