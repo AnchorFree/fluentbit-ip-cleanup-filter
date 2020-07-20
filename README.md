@@ -54,7 +54,51 @@ Fluent Bit v1.4.6
 
 ### Kubernetes
 
-Section in progress
+Starting from `v2.10.0`, the [official fluent-bit chart](https://github.com/helm/charts/tree/master/stable/fluent-bit)
+supports [init containers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
+via `initContainers` value. Below is the example of `values.yaml` that installs
+`fluentbit-ip-cleanup-filter` before starting fluent-bit:
+
+```yaml
+env:
+  # https://github.com/AnchorFree/fluentbit-ip-cleanup-filter#configuration
+  - name: VENDOR_PATH
+    value: &plugin_path /fluent-bit/plugins
+
+extraVolumes:
+  - name: &vol_name plugins
+    emptyDir:
+      medium: Memory
+      sizeLimit: 5Mi
+
+extraVolumeMounts:
+  - name: *vol_name
+    mountPath: *plugin_path
+
+# https://docs.fluentbit.io/manual/pipeline/filters/lua
+extraEntries:
+  filter: |-
+    [FILTER]
+        Name            lua
+        Match           *
+        script          /fluent-bit/plugins/cleanup_ip.lua
+        call            clean
+
+initContainers:
+  load-plugin:
+    image: "appropriate/curl:latest"
+    imagePullPolicy: "IfNotPresent"
+    volumeMounts:
+      - name: *vol_name
+        mountPath: *plugin_path
+    command:
+      - "/bin/sh"
+      - "-c"
+      - |
+        curl -sS https://codeload.github.com/AnchorFree/fluentbit-ip-cleanup-filter/zip/master -o /plugin.zip
+        unzip /plugin.zip
+        cp -av /fluentbit-ip-cleanup-filter-master/* /fluent-bit/plugins/
+```
 
 
 ## Configuration
