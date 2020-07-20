@@ -2,7 +2,25 @@ Provides a [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua)
 for [fluent-bit](https://github.com/fluent/fluent-bit) to anonymize IPv4 and
 IPv6 addresses from log records.
 
+
 ## Motivation
+
+Most filters and plugins from fluent-bit/fluentd ecosystem assume a prior knowledge
+of the structure of incoming log records. However, in environment with multiple
+sources of logs which are not under your control, there is no way to know upfront
+the key names or spectrum of possible values (i.e. how IP address is enclosed in
+the value: simple `<ipaddr>` or `<ipaddr>:<port>` or even `<some-data><ipaddr><some-data>`).
+Thus, there is no way to apply a default fluent-bit's [Modify](https://docs.fluentbit.io/manual/pipeline/filters/modify)
+filter or any of the myriad of [fluentd plugins](https://www.fluentd.org/plugins)
+to solve given problem.
+
+`fluentbit-ip-cleanup-filter` implements fluent-bit's [Lua filter plugin](https://docs.fluentbit.io/manual/pipeline/filters/lua)
+that finds all IPv4 and IPv6 entries in the record (no matter of it's structure)
+using [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/) and replaces them with
+values provided in [configuration](#configuration).
+
+
+## Benchmarks
 
 Section in progress
 
