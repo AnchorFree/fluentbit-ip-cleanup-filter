@@ -2,7 +2,25 @@ Provides a [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua)
 for [fluent-bit](https://github.com/fluent/fluent-bit) to anonymize IPv4 and
 IPv6 addresses from log records.
 
+
 ## Motivation
+
+Most filters and plugins from fluent-bit/fluentd ecosystem assume a prior knowledge
+of the structure of incoming log records. However, in environment with multiple
+sources of logs which are not under your control, there is no way to know upfront
+the key names or spectrum of possible values (i.e. how IP address is enclosed in
+the value: simple `<ipaddr>` or `<ipaddr>:<port>` or even `<some-data><ipaddr><some-data>`).
+Thus, there is no way to apply a default fluent-bit's [Modify](https://docs.fluentbit.io/manual/pipeline/filters/modify)
+filter or any of the myriad of [fluentd plugins](https://www.fluentd.org/plugins)
+to solve given problem.
+
+`fluentbit-ip-cleanup-filter` implements fluent-bit's [Lua filter plugin](https://docs.fluentbit.io/manual/pipeline/filters/lua)
+that finds all IPv4 and IPv6 entries in the record (no matter of it's structure)
+using [LPeg](http://www.inf.puc-rio.br/~roberto/lpeg/) and replaces them with
+values provided in [configuration](#configuration).
+
+
+## Benchmarks
 
 Section in progress
 
@@ -54,7 +72,51 @@ Fluent Bit v1.4.6
 
 ### Kubernetes
 
-Section in progress
+Starting from `v2.10.0`, the [official fluent-bit chart](https://github.com/helm/charts/tree/master/stable/fluent-bit)
+supports [init containers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
+via `initContainers` value. Below is the example of `values.yaml` that installs
+`fluentbit-ip-cleanup-filter` before starting fluent-bit:
+
+```yaml
+env:
+  # https://github.com/AnchorFree/fluentbit-ip-cleanup-filter#configuration
+  - name: VENDOR_PATH
+    value: &plugin_path /fluent-bit/plugins
+
+extraVolumes:
+  - name: &vol_name plugins
+    emptyDir:
+      medium: Memory
+      sizeLimit: 5Mi
+
+extraVolumeMounts:
+  - name: *vol_name
+    mountPath: *plugin_path
+
+# https://docs.fluentbit.io/manual/pipeline/filters/lua
+extraEntries:
+  filter: |-
+    [FILTER]
+        Name            lua
+        Match           *
+        script          /fluent-bit/plugins/cleanup_ip.lua
+        call            clean
+
+initContainers:
+  load-plugin:
+    image: "appropriate/curl:latest"
+    imagePullPolicy: "IfNotPresent"
+    volumeMounts:
+      - name: *vol_name
+        mountPath: *plugin_path
+    command:
+      - "/bin/sh"
+      - "-c"
+      - |
+        curl -sS https://codeload.github.com/AnchorFree/fluentbit-ip-cleanup-filter/zip/master -o /plugin.zip
+        unzip /plugin.zip
+        cp -av /fluentbit-ip-cleanup-filter-master/* /fluent-bit/plugins/
+```
 
 
 ## Configuration
